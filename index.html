@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>.</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .container {
+            margin-top: 35px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .project-card {
+            min-height: 20vh;
+            position: relative;
+            background-color: #000;
+            border: 1px solid #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            flex: 0 1 calc(40% - 20px);
+            transition: transform 0.2s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            max-width: 35%;
+            overflow: hidden;
+        }
+
+        .project-card:hover {
+            transform: scale(1.05);
+        }
+
+        .project-card.shining::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.3) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.3) 75%);
+            animation: shine 1.5s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .project-logo img {
+            max-width: 100px;
+            height: auto;
+        }
+
+        .project-info {
+            margin: 10px 0;
+        }
+
+        .project-user-info,
+        .project-slot-info {
+            background-color: #2a2a2a;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+
+        .project-user-info p,
+        .project-slot-info p {
+            margin: 0;
+        }
+
+        .project-no-slots {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(42, 42, 42, 0.8);
+            border-radius: 8px;
+            backdrop-filter: blur(1px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .lock-icon {
+            z-index: 2;
+        }
+
+        .lock-icon img {
+            width: 50px;
+        }
+
+        .project-no-slots p {
+            margin: 20px 0 0;
+            text-align: center;
+            z-index: 2;
+            padding: 8px;
+        }
+
+        .live-user-count {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+
+        .online-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+            box-shadow:
+                0 0 6px rgba(76, 175, 80, 0.9),
+                0 0 12px rgba(76, 175, 80, 0.7),
+                0 0 18px rgba(76, 175, 80, 0.5),
+                0 0 24px rgba(76, 175, 80, 0.3);
+            animation: pulse-expand 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-expand {
+            0% {
+                box-shadow:
+                    0 0 6px rgba(76, 175, 80, 0.9),
+                    0 0 12px rgba(76, 175, 80, 0.7),
+                    0 0 18px rgba(76, 175, 80, 0.5),
+                    0 0 24px rgba(76, 175, 80, 0.3);
+                transform: scale(1);
+            }
+
+            50% {
+                box-shadow:
+                    0 0 8px rgba(76, 175, 80, 0.9),
+                    0 0 16px rgba(76, 175, 80, 0.6),
+                    0 0 24px rgba(76, 175, 80, 0.4),
+                    0 0 32px rgba(76, 175, 80, 0.2);
+                transform: scale(1.2);
+            }
+
+            100% {
+                box-shadow:
+                    0 0 6px rgba(76, 175, 80, 0.9),
+                    0 0 12px rgba(76, 175, 80, 0.7),
+                    0 0 18px rgba(76, 175, 80, 0.5),
+                    0 0 24px rgba(76, 175, 80, 0.3);
+                transform: scale(1);
+            }
+        }
+
+        .notification {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 0px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification a {
+            display: none;
+        }
+
+        .notification a svg {
+            width: 30px;
+        }
+
+        .loading-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #000000;
+            border-radius: 50%;
+            border-top: 2px solid transparent;
+            border-right: 2px solid transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="danmu-container"></div>
+
+        <!-- Only one project card with the provided link -->
+        <div class="project-card shining" onclick="window.location.href='https://www.dmwin2.com/#/?invitationCode=24254754818'">
+            <div class="project-logo">
+                <img src="images/1win.svg" alt="1win Logo">
+            </div>
+            <div class="project-info">
+                <p>Online Betting and Casino</p>
+            </div>
+            <div class="project-slot-info">
+                <p>Join Now</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="live-user-count">
+        <span class="online-dot"></span>
+        Online users: <span id="userCount">Loading...</span>
+    </div>
+
+    <div class="notification">
+        <a class="unsubscribed"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black" class="w-6 h-6 subscribe-button">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"></path>
+            </svg>
+        </a>
+
+        <a class="subscribed"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="w-6 h-6 unsubscribe-button">
+                <path d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z"></path>
+                <path fill-rule="evenodd" d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z" clip-rule="evenodd"></path>
+            </svg></a>
+        <a class="loading"> <span class="loading-icon"></span></a>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+
+    <script>
+        let currentCount = 0;
+        let fakeInterval;
+        let already_fetching = false;
+
+        function fetchUserCount() {
+            if (already_fetching === false) {
+                already_fetching = true;
+                fetch('./user_count_data.json?v=' + Date.now())
+                    .then(response => response.json())
+                    .then(data => {
+                        currentCount = parseFloat(data.user_count);
+                        document.getElementById('userCount').innerText = currentCount;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user count:', error);
+                    })
+                    .finally(() => {
+                        clearInterval(fakeInterval);
+                        startFakeUpdates();
+                        already_fetching = false;
+                    });
+            }
+        }
+
+        function startFakeUpdates() {
+            fakeInterval = setInterval(() => {
+                const randomChange = Math.floor(Math.random() * 5) * (Math.random() < 0.5 ? -1 : 1);
+                const fakeCount = currentCount + randomChange;
+                document.getElementById('userCount').innerText = fakeCount;
+            }, 2000);
+        }
+
+        setInterval(fetchUserCount, 10000);
+        fetchUserCount();
+
+        function showToast(message, type = 'primary') {
+            const toast = document.createElement('div');
+            toast.className = `toast-alert toast-${type}`;
+            toast.innerHTML = `
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove();">&times;</button>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        const Q = $(".danmu-container");
+
+        function ae(options, extraOptions) {
+            var rowCount = Math.floor(Q.height() / 30),
+                itemHeight = Q.height() / rowCount,
+                settings = $.extend({}, options, extraOptions);
+
+            let danmuMessage = $("<div>", {
+                class: "danmu-message",
+                css: {
+                    top: Math.floor(Math.random() * rowCount) * itemHeight + settings.top + "px"
+                }
+            });
+
+            danmuMessage.append($("<div>", {
+                class: "message-content",
+                html: settings.danmu.trim() === "" ? ea.danmu : settings.danmu.trim()
+            }));
+
+            danmuMessage.appendTo(Q);
+            let itemWidth = Q.width() + danmuMessage.width();
+
+            danmuMessage.css("transition", `transform ${settings.speed}s linear`);
+            danmuMessage.css("transform", `translateX(-${itemWidth}px)`);
+
+            danmuMessage.on("transitionend", () => {
+                danmuMessage.remove();
+            });
+        }
+
+        window.onload = function () {
+            fetch('./user_danmu_data.json?v=' + Date.now())
+                .then(response => response.json())
+                .then(data => {
+                    let index = 0;
+
+                    function runWithDelay() {
+                        if (index < data.length) {
+                            ae({
+                                danmu: '<img class="icon" src="images/big-flower.png" alt="">' + data[index].mobile + ' won <span>₹ ' + data[index].balance + '</span>!',
+                                speed: 5,
+                                top: 0
+                            }, {});
+
+                            index++;
+                            setTimeout(runWithDelay, 2000);
+                        } else {
+                            index = 0;
+                            setTimeout(runWithDelay, 2000);
+                        }
+                    }
+
+                    runWithDelay();
+                })
+                .catch(error => {
+                    console.error('Error fetching user count:', error);
+                })
+                .finally(() => { });
+        };
+    </script>
+</body>
+
+</html>
